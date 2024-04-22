@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--
+  Based on https://github.com/mdn/dom-examples/blob/main/server-sent-events/index.html
+  Creative Commons Zero v1.0 Universal <https://github.com/mdn/dom-examples/blob/main/LICENSE>
+-->
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>Girls'Day Counter</title>
+</head>
+<body>
+
+  <ul>
+  </ul>
+
+<script>
+  const button = document.querySelector('button');
+  const evtSource = new EventSource('counter.php?action=events');
+  const eventList = document.querySelector('ul');
+
+  evtSource.onopen = function() {
+    console.log("Connection to server opened.");
+  };
+
+
+  evtSource.onerror = function() {
+    console.log("EventSource failed.");
+  };
+
+  evtSource.addEventListener("counter", function(e) {
+    var newElement = document.createElement("li");
+    var obj = JSON.parse(e.data);
+    newElement.innerHTML = "⏱️: " + obj.time + " 🧮: " + obj.sum;
+     eventList.appendChild(newElement);
+  }, false);
+
+</script>
+</body>
+</html>
