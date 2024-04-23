@@ -10,7 +10,7 @@ header("Cache-Control: no-cache");
 
 $db = new SQLite3("db.sqlite3");
 $db->exec('
-  CREATE TABLE IF NOT EXISTS "visits" (
+  CREATE TABLE IF NOT EXISTS "events" (
     "id"	INTEGER NOT NULL UNIQUE,
     "difference" INTEGER DEFAULT 1,
     "time" INTEGER,
@@ -18,20 +18,27 @@ $db->exec('
   );
 ');
 
+if ($_REQUEST["action"] == "reset") {
+    $db->exec(
+        'DELETE FROM events'
+    );
+}
+
 if ($_REQUEST["action"] == "increment") {
     $db->exec(
-        'INSERT INTO visits (difference, time) VALUES (1, unixepoch("now"))'
+        'INSERT INTO events (difference, time) VALUES (1, unixepoch("now"))'
     );
 }
 
 if ($_REQUEST["action"] == "decrement") {
     $db->exec(
-        'INSERT INTO visits (difference, time) VALUES (-1, unixepoch("now"))'
+        'INSERT INTO events (difference, time) VALUES (-1, unixepoch("now"))'
     );
 }
 
 
-$lastsum = $db->querySingle("SELECT SUM(difference) FROM visits;");
+$lastsum = $db->querySingle("SELECT SUM(difference) FROM events;");
+if ($lastsum === NULL) $lastsum = 0;
 
 if ($_REQUEST["action"] != "events") {
     header("Content-Type: text/plain");
@@ -41,7 +48,8 @@ if ($_REQUEST["action"] != "events") {
     $lastsum = NULL;
     while (1) {
         $curDate = date(DATE_ISO8601);
-        $sum = $db->querySingle("SELECT SUM(difference) FROM visits;");
+        $sum = $db->querySingle("SELECT SUM(difference) FROM events;");
+        if ($sum === NULL) $sum = 0;
         if ($sum != $lastsum) {
 
             print "event: counter\n";
