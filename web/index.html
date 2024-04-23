@@ -9,13 +9,13 @@
    <title>Girls'Day Counter</title>
 </head>
 <body>
-
+  <meter min="-10" max="50" low="2" high="15" optimum="10" value="0"></meter>
   <ul>
   </ul>
 
 <script>
-  const button = document.querySelector('button');
   const evtSource = new EventSource('counter.php?action=events');
+  const meter = document.querySelector('meter');
   const eventList = document.querySelector('ul');
 
   evtSource.onopen = function() {
@@ -30,8 +30,9 @@
   evtSource.addEventListener("counter", function(e) {
     var newElement = document.createElement("li");
     var obj = JSON.parse(e.data);
+    meter.value = obj.sum;
     newElement.innerHTML = "⏱️: " + obj.time + " 🧮: " + obj.sum;
-     eventList.appendChild(newElement);
+    eventList.appendChild(newElement);
   }, false);
 
 </script>

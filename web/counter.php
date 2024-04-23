@@ -37,12 +37,13 @@ if ($_REQUEST["action"] == "decrement") {
 }
 
 
-$lastsum = $db->querySingle("SELECT SUM(difference) FROM events;");
 if ($lastsum === NULL) $lastsum = 0;
 
 if ($_REQUEST["action"] != "events") {
     header("Content-Type: text/plain");
-    print "$lastsum\n";
+    $sum = $db->querySingle("SELECT SUM(difference) FROM events;");
+    if ($sum === NULL) $sum = 0;
+    print "$sum\n";
 } else {
     header("Content-Type: text/event-stream");
     $lastsum = NULL;
@@ -50,8 +51,9 @@ if ($_REQUEST["action"] != "events") {
         $curDate = date(DATE_ISO8601);
         $sum = $db->querySingle("SELECT SUM(difference) FROM events;");
         if ($sum === NULL) $sum = 0;
-        if ($sum != $lastsum) {
-
+        
+        if ($sum !== $lastsum) {
+            
             print "event: counter\n";
             print "data: " . json_encode(["time" => $curDate, "sum" => $sum]) . "\n\n";
             $lastsum = $sum;
