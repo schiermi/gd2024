@@ -30,6 +30,7 @@ output "demo" {
     READ_COUNTER       = "curl https://www.${aws_lightsail_domain.this.domain_name}/counter.php",
     INCREMENT_COUNTER  = "curl https://www.${aws_lightsail_domain.this.domain_name}/counter.php?action=increment",
     DECREMENT_COUNTER  = "curl https://www.${aws_lightsail_domain.this.domain_name}/counter.php?action=decrement",
+    RESET_COUNTER      = "curl https://www.${aws_lightsail_domain.this.domain_name}/counter.php?action=reset",
     SERVER_SIDE_EVENTS = "curl https://www.${aws_lightsail_domain.this.domain_name}/counter.php?action=events",
     BROWSER_FRONTEND   = "https://www.${aws_lightsail_domain.this.domain_name}/",
   }
