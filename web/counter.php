@@ -9,6 +9,7 @@ header("X-Accel-Buffering: no");
 header("Cache-Control: no-cache");
 
 $db = new SQLite3("db.sqlite3");
+$db->busyTimeout(1000);
 $db->exec('
   CREATE TABLE IF NOT EXISTS "events" (
     "id"	INTEGER NOT NULL UNIQUE,
@@ -51,9 +52,9 @@ if ($_REQUEST["action"] != "events") {
         $curDate = date(DATE_ISO8601);
         $sum = $db->querySingle("SELECT SUM(difference) FROM events;");
         if ($sum === NULL) $sum = 0;
-        
+
         if ($sum !== $lastsum) {
-            
+
             print "event: counter\n";
             print "data: " . json_encode(["time" => $curDate, "sum" => $sum]) . "\n\n";
             $lastsum = $sum;
@@ -67,7 +68,7 @@ if ($_REQUEST["action"] != "events") {
         if (connection_aborted()) {
             break;
         }
-        sleep(1);
+        sleep(0.5);
     }
 }
 
